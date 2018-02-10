@@ -1,7 +1,7 @@
 from threading import Thread, Event
 
 class StoppableThread(Thread):
-
+  "A thread that calls the target function on a loop until told to stop."
   def __init__(self, target):
     super(StoppableThread, self).__init__()
     self.__target = target
