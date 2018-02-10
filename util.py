@@ -6,7 +6,6 @@ class StoppableThread(Thread):
     super(StoppableThread, self).__init__()
     self.__target = target
     self.__stop = Event()
-    self.start()
 
   def run(self):
     while not self.__stop.is_set():
