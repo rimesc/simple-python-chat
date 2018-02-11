@@ -1,7 +1,7 @@
 import curses
 from chat import client
-from curses import newwin, A_BOLD
-from curses_extra import run
+from curses import newwin
+from curses_extra import run, write, NEW_LINE, BOLD
 from time import sleep
 
 # Actions
@@ -21,20 +21,20 @@ def message_received(ip, action, message):
     if not ip in people:
       name = message
       people[ip] = name
-      log_window.addstr(name, A_BOLD)
-      log_window.addstr(' joined the conversation.\n')
+      write(log_window, name, style = BOLD)
+      write(log_window, ' joined the conversation.', NEW_LINE)
       chat_client.tell(ip, HELLO, my_name) # reply so that the new person knows who I am
   elif action == SAY:
     # someone said something
     name = people[ip] if ip in people else 'anonymous'
-    log_window.addstr('[' + name + '] ', A_BOLD)
-    log_window.addstr(message + '\n')
+    write(log_window, '[', name, '] ', style = BOLD)
+    write(log_window, message, NEW_LINE)
   elif action == BYE:
     # someone has left the conversation
     if ip in people:
       name = people.pop(ip)
-      log_window.addstr(name, A_BOLD)
-      log_window.addstr(' left the conversation.\n')
+      write(log_window, name, style = BOLD)
+      write(log_window, ' left the conversation.', NEW_LINE)
 
 def main(screen_height, screen_width):
   global log_window, input_window
