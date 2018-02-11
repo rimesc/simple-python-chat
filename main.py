@@ -2,7 +2,6 @@ import curses
 from chat import client
 from curses import newwin
 from curses_extra import run, write, NEW_LINE, BOLD
-from time import sleep
 
 # Actions
 HELLO = 'HELLO'
