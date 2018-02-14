@@ -1,7 +1,5 @@
-import curses
 from chat import client
-from curses import newwin
-from curses_extra import run, write, NEW_LINE, BOLD
+from terminal import run, new_window, read, write, NEW_LINE, BOLD
 
 # Actions
 HELLO = 'HELLO'
@@ -34,19 +32,15 @@ def message_received(ip, action, message):
       name = people.pop(ip)
       write(log_window, name, style = BOLD)
       write(log_window, ' left the conversation.', NEW_LINE)
+  write(input_window, '') # return focus to the input window
 
 def main(screen_height, screen_width):
   global log_window, input_window
-  # set up the chat log
-  log_window = newwin(screen_height - 2, screen_width, 0, 0)
-  log_window.scrollok(True)  # when the window is full, scroll old messages off the top
-  log_window.immedok(True)  # update immediately when a new message arrives
+  # the chat log
+  log_window = new_window(screen_height - 1, screen_width, 0, 0, scrolling = True)
 
-  # set up the input for typing messages
-  input_window = newwin(2, screen_width, screen_height-2, 0)
-  input_window.hline(curses.ACS_HLINE, screen_width)
-  input_window.addstr(0, 0, 'Write a message: ')
-  input_window.refresh()
+  # the input for typing messages
+  input_window = new_window(1, screen_width, screen_height-1, 0)
 
   chat_client.when_message_received(message_received)
   chat_client.start_listening()
@@ -56,9 +50,8 @@ def main(screen_height, screen_width):
 
   finished = False
   while not finished:
-      input_window.move(1, 0)
-      input_window.clrtoeol()  # clear the input area ready for a new message
-      message = input_window.getstr(screen_width).decode()
+      input_window.clear()
+      message = read(input_window, prompt = 'Write a message: ')
       if message.lower() == 'bye':
         finished = True
       else:

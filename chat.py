@@ -1,3 +1,9 @@
+"""
+A simple chat client.
+
+Functions:
+* client() - create a new client
+"""
 from socket import socket, AF_INET, SOCK_DGRAM, SOL_SOCKET, SO_BROADCAST, gethostbyname, gethostname, timeout
 from util import forever
 
