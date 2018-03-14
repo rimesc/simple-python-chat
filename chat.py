@@ -1,79 +1,56 @@
-"""
-A simple chat client.
+import client as chat
+from terminal import new_window, SCREEN_HEIGHT, SCREEN_WIDTH, NEW_LINE, BOLD
 
-Functions:
-* client() - create a new client
-"""
-from socket import socket, AF_INET, SOCK_DGRAM, SOL_SOCKET, SO_BROADCAST, gethostbyname, gethostname, timeout
-from util import forever
+# Actions
+HELLO = 'HELLO'
+SAY = 'SAY'
+BYE = 'BYE'
 
-DEFAULT_PORT = 50000
-MAGIC_NUMBER = "fna349fn" #to make sure we don't confuse or get confused by other programs
+my_name = 'alice'
 
-class Client:
-  """
-  Simple chat client.
+# Keep track of who's online (ip address -> name)
+people = {chat.ip_address: my_name}
 
-  Operations:
-  * when_message_received(callback) - set a function to be called when a new message arrives
-  * start_listening() - start listening for messages
-  * stop_listening() - stop listening for messages
-  * broadcast(action, message) - send a message to everyone
-  * tell(ip, action, message) - send a message to one person
+# divide the window into a scrolling chat log and an input box for typing messages
+log_window = new_window(SCREEN_HEIGHT - 1, SCREEN_WIDTH, 0, 0, scrolling = True)
+input_window = new_window(1, SCREEN_WIDTH, SCREEN_HEIGHT - 1, 0)
 
-  The callback function passed to when_message_received should accept 3 arguments:
-  * ip - the address from which the message was sent
-  * action - the action (e.g. 'HELLO', 'SAY', 'BYE')
-  * message - the content of the message
-  """
+# define a function to handle incoming messages
+def message_received(ip, action, message):
+  if action == HELLO:
+    # someone new joined the conversation
+    if not ip in people:
+      name = message
+      people[ip] = name
+      log_window.write(name, style = BOLD)
+      log_window.write(' joined the conversation.', NEW_LINE)
+      chat.tell(ip, HELLO, my_name) # reply so that the new person knows who I am
+  elif action == SAY:
+    # someone said something
+    name = people[ip] if ip in people else 'anonymous'
+    log_window.write('[', name, '] ', style = BOLD)
+    log_window.write(message, NEW_LINE)
+  elif action == BYE:
+    # someone has left the conversation
+    if ip in people:
+      name = people.pop(ip)
+      log_window.write(name, style = BOLD)
+      log_window.write(' left the conversation.', NEW_LINE)
+  input_window.write('') # return focus to the input window
 
-  def __init__(self, port=DEFAULT_PORT):
-    self.port = port
-    self.ip_address = gethostbyname(gethostname()) # get our IP. Be careful if you have multiple network interfaces or IPs
-    self.__read_socket = socket(AF_INET, SOCK_DGRAM)
-    self.__read_socket.bind(('', self.port))
-    self.__read_socket.settimeout(1.0)
-    self.__write_socket = socket(AF_INET, SOCK_DGRAM) #create UDP socket
-    self.__write_socket.bind(('', 0))
-    self.__write_socket.setsockopt(SOL_SOCKET, SO_BROADCAST, 1) #this is a broadcast socket
-    self.__listener = forever(self.__listen)
+chat.when_message_received(message_received)
 
-  def start_listening(self):
-    "Start listening for new messages."
-    self.__listener.start()
+# let everyone know you're here
+chat.broadcast(HELLO, my_name)
 
-  def stop_listening(self):
-    "Stop listening for new messages."
-    self.__listener.stop()
-    self.__listener.join()
-  
-  def when_message_received(self, callback):
-    "Set a function that will be called for each new message received."
-    self.__onmessage = callback
+finished = False
+while not finished:
+    input_window.clear()
+    message = input_window.read(prompt = 'Write a message: ')
+    if message.lower() == 'bye':
+      finished = True
+    else:
+      chat.broadcast(SAY, message)
 
-  def broadcast(self, action, payload=''):
-    "Broadcast a message to everyone on the network."
-    self.__send(action, payload)
-
-  def tell(self, ip, action, payload=''):
-    "Send a message to a single person."
-    self.__send(action, payload, ip)
-
-  def __send(self, action, payload, ip='<broadcast>'):
-    data = '%s:%s:%s' % (MAGIC_NUMBER, action, payload)
-    self.__write_socket.sendto(data.encode(), (ip, self.port))
-
-  def __listen(self):
-    try:
-      (ip, data) = self.__read()
-      if data.startswith(MAGIC_NUMBER):
-        (_, action, payload) = data.split(':')
-        self.__onmessage(ip, action, payload)
-    except timeout:
-        pass
-
-  def __read(self):
-    data, (ip, _) = self.__read_socket.recvfrom(1024) # wait for a packet
-    return (ip, data.decode())
-
-client = Client
+chat.broadcast(BYE)
+chat.stop()
