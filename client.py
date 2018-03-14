@@ -66,7 +66,7 @@ class Client:
     try:
       (ip, data) = self.__read()
       if data.startswith(self.__magic_number):
-        (_, action, payload) = data.split(':')
+        (_, action, payload) = data.split(':', maxsplit=2)
         callback(ip, action, payload)
     except timeout:
         pass
