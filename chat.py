@@ -1,4 +1,5 @@
 import client as chat
+import emoji
 from terminal import message_log, input_box, BOLD, NEW_LINE
 
 # Actions
@@ -46,6 +47,7 @@ while not finished:
     if message.lower() == 'bye':
       finished = True
     else:
+      message = emoji.replace(message)
       chat.broadcast(SAY, message)
 
 chat.broadcast(BYE)
