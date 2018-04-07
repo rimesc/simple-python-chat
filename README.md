@@ -14,8 +14,10 @@ Intended purely for educational purposes.
 
 * `emoji.py` - Prototype extension to support emoticons/emoji conversion.
 
-To run:
+## Usage
+
+To run, type:
 
     python3 main.py
 
-To send messages, you need to run the program on two different computers on the same local area network.
+To send messages, you need to run the program on two different computers connected to the same local area network.
