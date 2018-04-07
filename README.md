@@ -17,3 +17,5 @@ Intended purely for educational purposes.
 To run:
 
     python3 main.py
+
+To send messages, you need to run the program on two different computers on the same local area network.
