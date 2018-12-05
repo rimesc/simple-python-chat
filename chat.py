@@ -1,4 +1,4 @@
-import client as chat
+from client import client, my_ip
 import emoji
 from terminal import message_log, input_box, BOLD, NEW_LINE
 
@@ -10,8 +10,10 @@ BYE = 'BYE'
 # Keep track of who's online (ip address -> name)
 people = {}
 
+chat = client(port = 50000)
+
 # define a function to handle incoming messages
-def message_received(ip, action, message):
+def handle_message(ip, action, message):
   if action == HELLO:
     # someone new joined the conversation
     if not ip in people:
@@ -32,10 +34,11 @@ def message_received(ip, action, message):
       message_log.print(name, style = BOLD)
       message_log.print(' left the conversation.', NEW_LINE)
 
-chat.when_message_received(message_received)
+# call the function we defined whenever a new message arives
+chat.on_message(handle_message)
 
+# choose a user name
 my_name = input_box.ask("What's your name? ")
-my_ip = chat.ip_address
 people[my_ip] = my_name
 
 # let everyone know you're here
@@ -44,11 +47,13 @@ chat.broadcast(HELLO, my_name)
 finished = False
 while not finished:
     message = input_box.ask("Enter a message: ")
+    # type 'bye' to leave the chat and exit the program
     if message.lower() == 'bye':
       finished = True
     else:
       message = emoji.replace(message)
       chat.broadcast(SAY, message)
 
+# let everyone know you're leaving
 chat.broadcast(BYE)
-chat.stop()
+chat.close()
