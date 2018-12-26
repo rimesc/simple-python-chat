@@ -1,6 +1,6 @@
 from client import Client, MY_IP
 import emoji
-from terminal import Window, BOLD, NEW_LINE
+from terminal import Window, BOLD
 
 # Actions
 HELLO = 'HELLO'
@@ -20,20 +20,18 @@ def handle_message(ip, action, message):
     if not ip in people:
       name = message
       people[ip] = name
-      window.print(name, style = BOLD)
-      window.print(' joined the conversation.', NEW_LINE)
+      window.print(name, 'joined the conversation.', style = BOLD)
       chat.tell(ip, HELLO, my_name) # reply so that the new person knows who I am
   elif action == SAY:
     # someone said something
     name = people[ip] if ip in people else 'anonymous'
-    window.print('[', name, '] ', style = BOLD)
-    window.print(message, NEW_LINE)
+    window.print('[', name, ']', style = BOLD, end=' ', sep = '')
+    window.print(message)
   elif action == BYE:
     # someone has left the conversation
     if ip in people:
       name = people.pop(ip)
-      window.print(name, style = BOLD)
-      window.print(' left the conversation.', NEW_LINE)
+      window.print(name, 'left the conversation.', style = BOLD)
 
 # call the function we defined whenever a new message arives
 chat.on_message(handle_message)

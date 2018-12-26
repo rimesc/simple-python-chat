@@ -7,7 +7,6 @@ box - and provides facades for accessing the two parts.
 Constants:
 * NORMAL - style constant used with the write function to produce normal text
 * BOLD - style constant used with the write function to produce bold text
-* NEW_LINE - the new line character
 
 Classes:
 * Window - the chat window
@@ -16,8 +15,6 @@ import curses
 
 BOLD = curses.A_BOLD
 NORMAL = curses.A_NORMAL
-
-NEW_LINE = '\n'
 
 class Window:
   """
@@ -47,10 +44,12 @@ class Window:
     self.__input = self.__main.subwin(1, self.width, self.height - 1, 0)
     self.__input.immedok(True)  # update immediately
 
-  def print(self, *objects, style = curses.A_NORMAL):
+  def print(self, *objects, sep = ' ', end = '\n', style = NORMAL):
     "Write text starting at the current position of the cursor."
     for obj in objects:
       self.__log.addstr(obj, style)
+      self.__log.addstr(sep, style)
+    self.__log.addstr(end, style)
     self.__input.addstr('') # return focus to the input window
 
   def clear(self):
