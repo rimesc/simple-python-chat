@@ -16,6 +16,12 @@ import curses
 BOLD = curses.A_BOLD
 NORMAL = curses.A_NORMAL
 
+curses.echo()
+curses.start_color()
+curses.use_default_colors()
+for i in range(0, curses.COLORS):
+  curses.init_pair(i + 1, i, -1)
+
 class Window:
   """
   Divides the terminal into two parts - a scrolling message log and a user input
