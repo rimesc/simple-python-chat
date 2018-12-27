@@ -2,26 +2,30 @@ from client import Client, MY_IP
 import emoji
 from terminal import Window, BOLD
 
-# Actions
+# actions
 HELLO = 'HELLO'
 SAY = 'SAY'
 BYE = 'BYE'
 
-# Keep track of who's online (ip address -> name)
-people = {}
-
-chat = Client(port = 50000)
+# create the chat window
 window = Window()
 
+# choose a user name
+my_name = window.ask("What's your name? ")
+
+# keep track of who's online (ip address -> name)
+people = {}
+
 # define a function to handle incoming messages
-def handle_message(ip, action, message):
+def handle_message(ip, payload):
+  (action, message) = decode(payload)
   if action == HELLO:
     # someone new joined the conversation
     if not ip in people:
       name = message
       people[ip] = name
       window.print(name, 'joined the conversation.', style = BOLD)
-      chat.tell(ip, HELLO, my_name) # reply so that the new person knows who I am
+      chat.send_message(encode(HELLO, my_name), ip = ip) # reply so that the new person knows who I am
   elif action == SAY:
     # someone said something
     name = people[ip] if ip in people else 'anonymous'
@@ -33,15 +37,22 @@ def handle_message(ip, action, message):
       name = people.pop(ip)
       window.print(name, 'left the conversation.', style = BOLD)
 
-# call the function we defined whenever a new message arives
-chat.on_message(handle_message)
+# decode an incoming message
+def decode(payload):
+  return payload.split(':', maxsplit=1)
 
-# choose a user name
-my_name = window.ask("What's your name? ")
-people[MY_IP] = my_name
+# encode an outgoing message
+def encode(action, message):
+  return '%s:%s' % (action, message)
+
+# create the chat client
+chat = Client(port = 50000)
+
+# call the function we defined whenever a new message arrives
+chat.on_message_received(handle_message)
 
 # let everyone know you're here
-chat.broadcast(HELLO, my_name)
+chat.send_message(encode(HELLO, my_name))
 
 finished = False
 while not finished:
@@ -51,8 +62,8 @@ while not finished:
       finished = True
     else:
       message = emoji.replace(message)
-      chat.broadcast(SAY, message)
+      chat.send_message(encode(SAY, message))
 
 # let everyone know you're leaving
-chat.broadcast(BYE)
+chat.send_message(BYE)
 chat.close()

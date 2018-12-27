@@ -13,8 +13,8 @@ class Reader:
     try:
       (ip, data) = self._receive()
       if data.startswith(MAGIC_NUMBER):
-        (_, action, payload) = data.split(':', maxsplit=2)
-        on_message(ip, action, payload)
+        (_, payload) = data.split(':', maxsplit=1)
+        on_message(ip, payload)
     except timeout:
         pass
 

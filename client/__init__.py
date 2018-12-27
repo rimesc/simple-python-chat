@@ -38,19 +38,18 @@ class Client:
     self._writer = _Writer(port)
     self._listener = None
 
-  def on_message(self, callback):
+  def on_message_received(self, callback):
     "Set a function to be called when a new message arrives."
     if self._listener:
       self._listener.stop()
     self._listener = Listener(self._reader, callback)
 
-  def broadcast(self, action, payload=''):
-    "Broadcast a message to everyone on the network."
-    self._writer.write(action, payload)
-
-  def tell(self, ip, action, payload=''):
-    "Send a message to a single person."
-    self._writer.write(action, payload, ip)
+  def send_message(self, payload, ip = '<broadcast>'):
+    """
+    Send a message.  If an IP address is specified then the message will be sent to that
+    address; otherwise it will be broadcast to everyone on the network.
+    """
+    self._writer.write(payload, ip)
 
   def close(self):
     "Stop listening for new messages."
