@@ -11,15 +11,13 @@ Intended purely for educational purposes.
 * `emoji.py` - Prototype extension to support emoticons/emoji conversion.
 
 #### Boilerplate/libraries
-* `main.py` - Entry point script that invokes `chat.py` inside a curses wrapper to perform set-up and tear-down.
 * `client` - Utility module that hides some of the complexity of Python networking.
 * `terminal` - Utility module that hides some of the complexity of the curses library.
-
 
 ## Usage
 
 To run, type:
 
-    python3 main.py
+    python3 .
 
 To send messages, you need to run the program on two different computers connected to the same local area network.
