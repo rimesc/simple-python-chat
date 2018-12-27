@@ -20,13 +20,6 @@ class Window:
   """
   Divides the terminal into two parts - a scrolling message log and a user input
   box - and provides methods for accessing the two parts.
-
-  Members:
-  * print(value, ..., style) - write to the message log
-  * clear() - clear the message log
-  * ask(prompt) - prompt the user for input
-  * height - height in lines of the terminal window
-  * width - width in characters of the terminal window
   """
 
   height = curses.LINES  # pylint: disable=no-member
@@ -45,18 +38,35 @@ class Window:
     self.__input.immedok(True)  # update immediately
 
   def print(self, *objects, sep = ' ', end = '\n', style = NORMAL):
-    "Write text starting at the current position of the cursor."
-    for obj in objects:
-      self.__log.addstr(obj, style)
-      self.__log.addstr(sep, style)
-    self.__log.addstr(end, style)
+    """
+    Print text to the message log.
+
+    Arguments:
+    * objects - objects to print
+    * sep - string inserted between the objects (defaults to a single space)
+    * end - string appended after the last object (defaults to a newline)
+    * style - text style to use (BOLD|NORMAL; defaults to NORMAL)
+    """
+    for obj in objects[0:-1]:
+      self.__print(obj, sep, style = style)
+    self.__print(objects[-1], end, style = style)
     self.__input.addstr('') # return focus to the input window
 
+  def __print(self, *objects, style):
+    for obj in objects:
+      self.__log.addstr(obj, style)
+
   def clear(self):
+    """Clear the message log."""
     self.__log.clear()
 
   def ask(self, prompt = ''):
-    "Read input from the user, with optional prompt."
+    """
+    Read input from the user, with optional prompt.
+
+    Arguments:
+    * prompt - optional prompt text
+    """
     self.__input.clear()
     self.__input.addstr(prompt, curses.A_BOLD)
     return self.__input.getstr(self.width - len(prompt)).decode()
