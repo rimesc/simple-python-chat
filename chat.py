@@ -29,8 +29,9 @@ def handle_message(ip, payload):
   elif action == SAY:
     # someone said something
     name = people[ip] if ip in people else 'anonymous'
-    window.print('[', name, ']', style = BOLD, end=' ', sep = '')
-    window.print(message)
+    colour = (13 * int(ip.split('.')[3])) % window.colors
+    window.print('[', name, ']', style = BOLD, colour = colour, end=' ', sep = '')
+    window.print(message, colour = colour)
   elif action == BYE:
     # someone has left the conversation
     if ip in people:

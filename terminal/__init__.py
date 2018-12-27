@@ -24,6 +24,7 @@ class Window:
 
   height = curses.LINES  # pylint: disable=no-member
   width = curses.COLS    # pylint: disable=no-member
+  colors = curses.COLORS
 
   def __init__(self):
     super(Window, self).__init__()
@@ -37,7 +38,7 @@ class Window:
     self.__input = self.__main.subwin(1, self.width, self.height - 1, 0)
     self.__input.immedok(True)  # update immediately
 
-  def print(self, *objects, sep = ' ', end = '\n', style = NORMAL):
+  def print(self, *objects, sep = ' ', end = '\n', style = NORMAL, colour = 0):
     """
     Print text to the message log.
 
@@ -48,13 +49,13 @@ class Window:
     * style - text style to use (BOLD|NORMAL; defaults to NORMAL)
     """
     for obj in objects[0:-1]:
-      self.__print(obj, sep, style = style)
-    self.__print(objects[-1], end, style = style)
+      self.__print(obj, sep, style = style, colour = colour)
+    self.__print(objects[-1], end, style = style, colour = colour)
     self.__input.addstr('') # return focus to the input window
 
-  def __print(self, *objects, style):
+  def __print(self, *objects, style, colour):
     for obj in objects:
-      self.__log.addstr(obj, style)
+      self.__log.addstr(obj, style | curses.color_pair(colour))
 
   def clear(self):
     """Clear the message log."""
