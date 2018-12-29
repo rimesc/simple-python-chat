@@ -1,6 +1,6 @@
 from client import Client
 import emoji
-from terminal import Window, BOLD
+from terminal import Window, BOLD, STANDOUT
 
 # actions
 HELLO = 'HELLO'
@@ -30,8 +30,8 @@ def handle_message(ip, payload):
     # someone said something
     name = people[ip] if ip in people else 'anonymous'
     colour = (13 * int(ip.split('.')[3])) % window.colors
-    window.print('[', name, ']', style = BOLD, colour = colour, end=' ', sep = '')
-    window.print(message, colour = colour)
+    window.print(name, style = STANDOUT, colour = colour, end='')
+    window.print(' ', message, colour = colour)
   elif action == BYE:
     # someone has left the conversation
     if ip in people:

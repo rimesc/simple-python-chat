@@ -5,8 +5,10 @@ Splits the terminal into two parts - a scrolling message log and a user input
 box - and provides facades for accessing the two parts.
 
 Constants:
-* NORMAL - style constant used with the write function to produce normal text
-* BOLD - style constant used with the write function to produce bold text
+* NORMAL - style constant used to produce normal text
+* BOLD - style constant used to produce bold text
+* UNDERLINE - style constant used to produce underlined text
+* STANDOUT - style constant used to produce emphasised (inverted colour) text
 
 Classes:
 * Window - the chat window
@@ -15,6 +17,8 @@ import curses
 
 BOLD = curses.A_BOLD
 NORMAL = curses.A_NORMAL
+UNDERLINE = curses.A_UNDERLINE
+STANDOUT = curses.A_STANDOUT
 
 curses.echo()
 curses.start_color()
