@@ -9,7 +9,6 @@ class Reader:
     self._socket.settimeout(timeout)
 
   def read(self, on_message):
-    "Wait a short time for a message to be received and invoke the callback if one arrives."
     try:
       (ip, data) = self._receive()
       if data.startswith(MAGIC_NUMBER):

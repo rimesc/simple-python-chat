@@ -10,7 +10,6 @@ class _Writer:
     self._socket.setsockopt(SOL_SOCKET, SO_BROADCAST, 1) # this is a broadcast socket
 
   def write(self, payload, ip='<broadcast>'):
-    "Send a message to the given address (if ip is omitted, broadcast to everyone)."
     data = '%s:%s' % (MAGIC_NUMBER, payload)
     self._socket.sendto(data.encode(), (ip, self.port))
 
