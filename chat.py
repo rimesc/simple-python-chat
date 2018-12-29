@@ -47,24 +47,23 @@ def encode(action, message):
   return '%s:%s' % (action, message)
 
 # create the chat client
-chat = Client(port = 50000)
+with Client(port = 50000) as chat:
 
-# call the function we defined whenever a new message arrives
-chat.on_message_received(handle_message)
+  # call the function we defined whenever a new message arrives
+  chat.on_message_received(handle_message)
 
-# let everyone know you're here
-chat.send_message(encode(HELLO, my_name))
+  # let everyone know you're here
+  chat.send_message(encode(HELLO, my_name))
 
-finished = False
-while not finished:
-    message = window.ask("Enter a message: ")
-    # type 'bye' to leave the chat and exit the program
-    if message.lower() == 'bye':
-      finished = True
-    else:
-      message = emoji.replace(message)
-      chat.send_message(encode(SAY, message))
+  finished = False
+  while not finished:
+      message = window.ask("Enter a message: ")
+      # type 'bye' to leave the chat and exit the program
+      if message.lower() == 'bye':
+        finished = True
+      else:
+        message = emoji.replace(message)
+        chat.send_message(encode(SAY, message))
 
-# let everyone know you're leaving
-chat.send_message(BYE)
-chat.close()
+  # let everyone know you're leaving
+  chat.send_message(BYE)

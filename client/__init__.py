@@ -36,8 +36,10 @@ class Client:
     """
     self._writer.write(payload, ip)
 
-  def close(self):
-    """Stop listening for new messages."""
+  def __enter__(self):
+    return self
+
+  def __exit__(self, type, value, traceback):
     self._listener.stop()
     self._reader.close()
     self._writer.close()
