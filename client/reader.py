@@ -4,13 +4,13 @@ from .common import MAGIC_NUMBER
 class Reader:
 
   def __init__(self, port, timeout=1.0):
-    self._socket = socket(AF_INET, SOCK_DGRAM)
-    self._socket.bind(('', port))
-    self._socket.settimeout(timeout)
+    self.__socket = socket(AF_INET, SOCK_DGRAM)
+    self.__socket.bind(('', port))
+    self.__socket.settimeout(timeout)
 
   def read(self, on_message):
     try:
-      (ip, data) = self._receive()
+      (ip, data) = self.__receive()
       if data.startswith(MAGIC_NUMBER):
         (_, payload) = data.split(':', maxsplit=1)
         on_message(ip, payload)
@@ -18,8 +18,8 @@ class Reader:
         pass
 
   def close(self):
-    self._socket.close()
+    self.__socket.close()
 
-  def _receive(self):
-    data, (ip, _) = self._socket.recvfrom(1024) # wait for a packet
+  def __receive(self):
+    data, (ip, _) = self.__socket.recvfrom(1024) # wait for a packet
     return (ip, data.decode())

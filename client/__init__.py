@@ -3,7 +3,7 @@ Package providing a simple chat client.
 """
 from socket import gethostbyname, gethostname
 from .reader import Reader
-from .writer import _Writer
+from .writer import Writer
 from .listener import Listener
 
 class Client:
@@ -15,9 +15,9 @@ class Client:
   """
 
   def __init__(self, port=50000):
-    self._reader = Reader(port)
-    self._writer = _Writer(port)
-    self._listener = None
+    self.__reader = Reader(port)
+    self.__writer = Writer(port)
+    self.__listener = None
 
   def on_message_received(self, callback):
     """
@@ -25,21 +25,21 @@ class Client:
     should accept 2 arguments: the address from which the message was sent (ip)
     and the content of the message (payload).
     """
-    if self._listener:
-      self._listener.stop()
-    self._listener = Listener(self._reader, callback)
+    if self.__listener:
+      self.__listener.stop()
+    self.__listener = Listener(self.__reader, callback)
 
   def send_message(self, payload, ip = '<broadcast>'):
     """
     Send a message.  If an IP address is specified then the message will be sent to that
     address only; otherwise it will be broadcast to everyone on the network.
     """
-    self._writer.write(payload, ip)
+    self.__writer.write(payload, ip)
 
   def __enter__(self):
     return self
 
   def __exit__(self, type, value, traceback):
-    self._listener.stop()
-    self._reader.close()
-    self._writer.close()
+    self.__listener.stop()
+    self.__reader.close()
+    self.__writer.close()
