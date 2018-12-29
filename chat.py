@@ -1,4 +1,4 @@
-from client import Client, MY_IP
+from client import Client
 import emoji
 from terminal import Window, BOLD
 

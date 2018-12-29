@@ -1,18 +1,10 @@
 """
 Package providing a simple chat client.
-
-Constants:
-* MY_IP - IP address of this computer
-
-Classes:
-* Client - a chat client
 """
 from socket import gethostbyname, gethostname
 from .reader import Reader
 from .writer import _Writer
 from .listener import Listener
-
-MY_IP = gethostbyname(gethostname()) # get our IP. Be careful if you have multiple network interfaces or IPs
 
 class Client:
   """
